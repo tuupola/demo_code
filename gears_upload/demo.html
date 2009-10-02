@@ -38,7 +38,7 @@
   <div class="entry">
     
     <div class="entrytitle">
-  	  <h2>Drag an image from desktop to area below</h2> 
+  	  <h2>Drag an image to area below</h2> 
       <h4>Files will be deleted automagically every few minutes.</h4>
     </div>
 
@@ -49,6 +49,16 @@
     	    You do not seem to have Google Gears installed. You must first 
           <a style="color: #fff; border-bottom: 1px dotted #fff" href="http://gears.google.com/?action=install&return=<?php print $_SERVER['PHP_SELF']?>">install
           Google Gears</a> for this demo to work.
+    	  </p>
+      </blockquote>
+      
+      <blockquote class="blue" id="firefox" style="display: none;">
+        <p>
+    	    Google Gears is currently 
+          <a style="color: #fff; border-bottom: 1px dotted #fff" href="http://code.google.com/p/gears/source/detail?r=3393">broken
+          with FireFox 3.5.x</a>. Dropping an image below will not upload it. Instead browser
+          open the image. This should be fixed in next Google Gears release.
+    	    Older version of FireFox will work just fine.
     	  </p>
       </blockquote>
 
@@ -75,6 +85,11 @@
 <script src="http://code.google.com/apis/gears/gears_init.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
 $(function() {
+    
+    /* Display warningn about FF 3.5.x. */
+    if ($.browser.mozilla) {
+      $('#firefox').show();      
+    }
     
     /* Check for Google Gears. */
     if (!window.google || !google.gears) {

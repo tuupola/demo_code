@@ -42,9 +42,14 @@
 		<h4>Files will be deleted automagically every few minutes.</h4>
 	</div>
 	<div class="entrybody">
-
-        <div id="dropzone" style="min-height: 400px;"><br /><br /><br /></div>
-
+  	<blockquote class="blue" id="fail" style="display: none;">
+  		<p>
+  		  You do not seem to have Google Gears installed. You must first 
+  		  <a style="color: #fff; border-bottom: 1px dotted #fff" href="http://gears.google.com/?action=install&return=<?php print $_SERVER['PHP_SELF']?>">install
+  		  Google Gears</a> for this demo to work.
+  		</p>
+  	</blockquote>
+    <div id="dropzone" style="min-height: 400px;"><br /><br /><br /></div>
 	</div>	
 </div>
 
@@ -66,6 +71,11 @@
 <script src="http://code.google.com/apis/gears/gears_init.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript" charset="utf-8">
 $(function() {
+    
+    /* Check for Google Gears. */
+    if (!window.google || !google.gears) {
+      $('#fail').show();
+    }
     
     /* Display uloaded files. */
     $("#dropzone").load("list.php");

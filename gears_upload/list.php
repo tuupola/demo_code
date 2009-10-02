@@ -1,4 +1,5 @@
 <?php
+header("cache-control: no-cache");
 
 require_once 'ImageResize.php';
 

@@ -170,7 +170,7 @@ $(function() {
                     if (request.responseText) {
                         alert(request.responseText);
                     }
-                    $("#dropzone").load("list.php");
+                    $("#dropzone").load("list.php?random=" +  (new Date()).getTime());
                     break;
             }
         };

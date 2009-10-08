@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>Drag and Drop File Upload With Google Gears Demo</title>
+  <link href="http://www.appelsiini.net/stylesheets/screen.css" rel="stylesheet" type="text/css" />
+  <link href="http://www.appelsiini.net/stylesheets/styles.css" rel="stylesheet" type="text/css" /> 
+  <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/tuupola" title="Atom feed" />
+</head>
+<body>
+  <div class="container"> 
+
+    <!-- header -->
+    <div id="header" class="span-20">
+      <div class="span-11">
+                
+        <h1>Drag & Drop File Upload</h1><br />
+        <p>With a little help from Google Gears.</p>
+         
+      </div>
+      <div class="span-9 last">
+        <ul id="nav">        
+          <li id="first"><a href="http://www.appelsiini.net/">weblog</a></li>
+          <li><a href="http://www.appelsiini.net/projects" class="last">projects</a></li>
+          <!--
+          <li><a href="http://www.appelsiini.net/cv" class="last">cv</a></li>
+          -->
+        </ul>
+      </div>
+    </div>
+    <!-- /header -->
+
+    <!-- content -->
+    <div class="span-14" id="content">
+    
+  
+  <div class="entry">
+    
+    <div class="entrytitle">
+  	  <h2>Drag an image or images to area below</h2> 
+    </div>
+
+  	<div class="entrybody">
+  	  <p>
+  	      Files will be deleted automagically every few minutes. To see how it was done read the 
+  	      <a href="http://www.appelsiini.net/2009/10/drag-and-drop-file-upload-with-google-gears">tutorial</a>.
+  	  </p>
+      
+      <blockquote class="blue" id="firefox">
+        <p>
+    	  This demo currently works only with
+          <a style="color: #fff; border-bottom: 1px dotted #fff" href="http://ftp.mozilla.org/pub/mozilla.org/firefox/nightly/3.6a1-candidates/">
+          FireFox 3.6.x</a>. 
+    	  </p>
+      </blockquote>
+
+      <div id="dropzone" style="min-height: 500px;"><br /><br /><br /></div>
+  	</div>	
+
+  </div>
+
+  <hr class="space" />
+
+    </div>
+    <!-- /content -->
+
+    <!-- sidebar -->
+    <div class="span-5 push-1 last" id="sidebar">
+      <br /><br />
+      <a href="http://twitter.com/tuupola"><img src="http://www.appelsiini.net/images/twitter3.png" alt="@tuupola" /></a>
+    </div>
+    <!-- /sidebar -->
+
+  </div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="http://code.google.com/apis/gears/gears_init.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+$(function() {
+    
+    /* Display uploaded files. */
+    $("#dropzone").load("list.php");
+    
+    /* We cannot use $.bind() since jQuery does not normalize the native events. */
+    $('#dropzone')
+        .get(0)
+        .addEventListener('drop', upload, false);
+    $('#dropzone')
+        .get(0)
+        .addEventListener('dragenter', function(event) { 
+                $('#dropzone').css("background-color", "#ffc"); 
+            }, false);
+    $('#dropzone')
+        .get(0)
+        .addEventListener('dragexit', function(event) { 
+                $('#dropzone').css("background-color", "#fff"); 
+            }, false);   
+    
+    function upload(event) {
+        
+        var data = event.dataTransfer;
+
+        /* Show spinner for each dropped file. */
+        for (var i = 0; i < data.files.length; i++) {
+            $('#dropzone').append($('<img src="spinner.gif" width="16" height="16" />').css("padding", "48px"));
+        }
+        
+        var boundary = '------multipartformboundary' + (new Date).getTime();
+        var dashdash = '--';
+        var crlf     = '\r\n';
+
+        /* Build RFC2388 string. */
+        var builder = '';
+
+        builder += dashdash;
+        builder += boundary;
+        builder += crlf;
+        
+        var xhr = new XMLHttpRequest()
+        
+        for (var i = 0; i < data.files.length; i++) {
+            var file = data.files[i];
+
+            /* Generate headers. */            
+            builder += 'Content-Disposition: form-data; name="user_file[]"';
+            if (file.fileName) {
+              builder += '; filename="' + file.fileName + '"';
+            }
+            builder += crlf;
+
+            builder += 'Content-Type: application/octet-stream';
+            builder += crlf;
+            builder += crlf; 
+
+            /* Append binary data. */
+            builder += file.getAsBinary();
+            builder += crlf;
+
+            /* Write boundary. */
+            builder += dashdash;
+            builder += boundary;
+            builder += crlf;
+        }
+        
+        /* Mark end of the request. */
+        builder += dashdash;
+        builder += boundary;
+        builder += dashdash;
+        builder += crlf;
+
+        xhr.open("POST", "upload.php", true);
+        xhr.setRequestHeader('content-type', 'multipart/form-data; boundary=' + boundary);
+        xhr.sendAsBinary(builder);        
+        
+        xhr.onload = function(event) { 
+            /* If we got an error display it. */
+            if (xhr.responseText) {
+                alert(xhr.responseText);
+            }
+            $("#dropzone").load("list.php?random=" +  (new Date).getTime());
+        };
+        
+        /* Prevent FireFox opening the dragged file. */
+        event.stopPropagation();
+        
+    }
+});
+</script>      
+
+<script src="/mint/?js" type="text/javascript"></script>
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+<script type="text/javascript">
+  _uacct = "UA-190966-1";
+  urchinTracker();
+</script>
+
+</body>
+</html>
+

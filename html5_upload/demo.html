@@ -95,7 +95,12 @@ $(function() {
         .get(0)
         .addEventListener('dragexit', function(event) { 
                 $('#dropzone').css("background-color", "#fff"); 
-            }, false);   
+            }, false);
+    $('#dropzone')
+        .get(0)
+        .addEventListener('dragover', function(event) { 
+                event.preventDefault(); 
+            }, false);
     
     function upload(event) {
         

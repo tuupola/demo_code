@@ -35,21 +35,30 @@
    	  -->
     </div>
   </div>
+  
+  <div data-role="footer">
+		<h4><span id="packets">0</span> packets sent</h4>
+  		<br />
+	</div>
 </div>
 
 <script type="text/javascript" charset="utf-8"> 
-   
+
+$(function() {
+
 var acceleration = {x : 0, y : 0};
 var previous     = {x : 0, y : 0}; 
 
 var threshold    = 3;
 var interval     = 250;
 var payload      = {};
+var packets      = 0;
 
 var query  = $.deparam.querystring();
 var socket = new WebSocket("ws://ws.appelsiini.net:8080/iphone/" + query.pin);
  
 socket.onopen = function(event) {
+    /* Notify desktop we just connected. */
     payload = {mobile: "Mobile connected"}
     socket.send(JSON.stringify(payload));
 };
@@ -90,15 +99,18 @@ window.ondevicemotion = function(event) {
 var sleeper = setInterval(function() {    
      
     payload = {acceleration: acceleration};
+    
      
     if ((threshold < Math.abs(acceleration.x - previous.x)) || 
         (threshold < Math.abs(acceleration.y - previous.y))) {
             previous.x = acceleration.x;
             previous.y = acceleration.y;
             socket.send(JSON.stringify(payload));
+            $("#packets").text(packets++);
     }
 }, interval);
 
+});
 </script>
 
 </body>

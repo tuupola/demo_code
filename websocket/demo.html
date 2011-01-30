@@ -16,7 +16,7 @@
 <div class="container">
   <div class="span-20" id="header">
     <div class="span-14">
-    <h1>iPhone Controlled 3D Cube</h1>
+    <h1>iPhone Controlled Cube</h1>
     <p>Technology guy with passion for advertising.</p>
   </div>
   
@@ -36,8 +36,8 @@
             
     <p id="connected" class="success" style="display:none;">
       Now try tilting your iPhone. The more you tilt the faster the cube will rotate.
-      Response rate has been degraded a bit to prevent mobile browser sending data hundreds of times
-      per second.
+      Response rate has been degraded on purpose to prevent mobile browser sending data 
+      hundreds of times per second.
     </p>
 
     <canvas id="canvas" width="790" height="480">
@@ -54,10 +54,14 @@
 
 <script src="js/pre3d.js"></script>
 <script src="js/pre3d_shape_utils.js"></script>
-<script src="js/demo_utils.js"></script>
 
 <script type="text/javascript" charset="utf-8">
 $(function() {
+
+    /* All 3D drawing code taken from Pre3d rendering engine demos */
+    /* by Dean McNamee <dean@gmail.com>.  All rights reserved.     */
+    
+    /* Scroll down to see the websocket code.                      */
 
     var black = new Pre3d.RGBA(0, 0, 0, 1);
     var white = new Pre3d.RGBA(1, 1, 1, 1);
@@ -120,9 +124,11 @@ $(function() {
         ct.translate(camera_state.x, camera_state.y, camera_state.z);
     }
 
+    /* Websocket related code starts here... */
+
     var acceleration = { x: 0, y:0 };
 
-    var interval = setInterval(function() {
+    var sleeper = setInterval(function() {
         camera_state.rotate_y -= acceleration.x * 0.005;
         camera_state.rotate_x += acceleration.y * 0.005;
         set_camera();
@@ -131,7 +137,7 @@ $(function() {
 
 
     function pad(number, length) {
-
+      
         var str = '' + number;
         while (str.length < length) {
             str = '0' + str;
@@ -140,14 +146,10 @@ $(function() {
         return str;
     }
 
-
-    var acceleration = {x : 0, y : 0};
-
     var pin = pad(Math.floor(Math.random() * 9999), 4);
     $("#pin").text(pin);
 
     var socket = new WebSocket("ws://ws.appelsiini.net:8080/iphone/" + pin);
-    //var socket = new WebSocket("ws://192.168.1.79:8080/iphone/" + pin);
 
     socket.onopen = function(event) {
     };

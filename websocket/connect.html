@@ -1,0 +1,98 @@
+<!DOCTYPE html> 
+<html> 
+	<head> 
+  <title>iPhone accelorometer</title> 
+  <meta charset="utf-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/> 
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a1/jquery.mobile-1.0a1.min.css" />
+	<script src="http://code.jquery.com/jquery-1.4.3.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://code.jquery.com/mobile/1.0a1/jquery.mobile-1.0a1.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/jquery.ba-bbq.min.js" type="text/javascript" charset="utf-8"></script>
+</head> 
+
+<body> 
+
+<div data-role="page" id="index">
+  
+	<div data-role="header" data-nobackbtn="true">
+		<h1>Connected</h1>
+	</div>
+
+  <div data-role="content" data-inset="true" data-theme="a">
+    <p>
+      Now tilt your phone and see stuff move in computer browser.
+    </p>
+    <div data-role="fieldcontain">
+    	<label for="x">X:</label>
+     	<input type="range" name="beta" id="beta" value="0" min="0" max="360" style="display:none;" />
+     	<br />
+    	<label for="y">Y:</label>
+     	<input type="range" name="gamma" id="gamma" value="0" min="0" max="180" style="display:none;" />
+     	<!--
+    	<label for="z">Z:</label>
+     	<input type="range" name="alpha" id="alpha" value="0" min="0" max="360"  />
+     	-->
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" charset="utf-8"> 
+   
+var acceleration = {x : 0, y : 0};
+var previous     = {x : 0, y : 0}; 
+
+var threshold    = 3;
+var payload = {};
+
+var query  = $.deparam.querystring();
+//var socket = new WebSocket("ws://ws.appelsiini.net:8080/iphone/" + query.pin);
+var socket = new WebSocket("ws://192.168.1.79:8080/iphone/" + query.pin);
+ 
+socket.onopen = function(event) {
+    payload = {mobile: "Mobile connected"}
+    socket.send(JSON.stringify(payload));
+};
+
+window.ondeviceorientation = function(event) {
+    /* 
+       beta:  -180..180 (rotation around x axis)
+       gamma:  -90..90  (rotation around y axis) 
+       alpha:    0..360 (rotation around z axis) 
+    */
+    /* jQuery mobile cannot handle negative minimum value. */
+    $("#beta").val(event.beta * 1 + 180).trigger("keyup");;
+    $("#gamma").val(event.gamma * 1 + 90).trigger("keyup");;
+    //$("#alpha").val(event.alpha * 1).trigger("keyup");;
+    
+    acceleration.x = event.gamma;
+    acceleration.y = event.beta;    
+};
+ 
+/*
+window.ondevicemotion = function(event) {
+    $("#x").text("x:" + event.accelerationIncludingGravity.x);
+    $("#y").text("y:" + event.accelerationIncludingGravity.y);
+    $("#z").text("z:" + event.accelerationIncludingGravity.z);
+  
+    acceleration.x = event.accelerationIncludingGravity.x;
+    acceleration.y = event.accelerationIncludingGravity.y;
+    
+    //socket.send(JSON.stringify(payload));
+};
+*/
+
+var interval = setInterval(function() {    
+     
+    payload = {acceleration: acceleration};
+     
+    if ((threshold < Math.abs(acceleration.x - previous.x)) || 
+        (threshold < Math.abs(acceleration.y - previous.y))) {
+            previous.x = acceleration.x;
+            previous.y = acceleration.y;
+            socket.send(JSON.stringify(payload));
+    }
+}, 250);
+</script>
+
+</body>
+</html>

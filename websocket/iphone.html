@@ -1,0 +1,135 @@
+<!DOCTYPE html> 
+<html> 
+	<head> 
+  <title>iPhone accelorometer</title> 
+  <meta charset="utf-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/> 
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a1/jquery.mobile-1.0a1.min.css" />
+	<script src="http://code.jquery.com/jquery-1.4.3.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="http://code.jquery.com/mobile/1.0a1/jquery.mobile-1.0a1.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/jquery.ba-bbq.min.js" type="text/javascript" charset="utf-8"></script>
+</head> 
+
+<body> 
+<div data-role="page">
+  
+	<div data-role="header" data-nobackbtn="true">
+		<h1>Disconnected</h1>
+	</div>
+
+  <div data-role="content" data-inset="true" data-theme="a">
+    <p>
+      To to connect to your computer browser enter the four number PIN code. 
+    </p>
+    <form action="connect.html" method="get">
+      <fieldset>
+        <div data-role="fieldcontain">
+          <input type="text" name="pin" id="pin" value=""  />
+        </div>
+        <input id="submit" type="submit" value="Connect" data-role="button" data-inline="false" data-theme="a" />
+      </fieldset>
+    </form>
+  </div>
+
+
+<!-- 
+	<div data-role="content">	
+		<h2>Velocity</h2> 
+    <div id="abs_x"> 
+    </div> 
+    <div id="abs_y"> 
+    </div> 
+    <h1>Gyroscope</h1> 
+    <div id="beta"> 
+    </div> 
+    <div id="gamma"> 
+    </div> 
+    <div id="alpha"> 
+    </div> 
+    <h1>Accelerometer</h1> 
+    <div id="x"> 
+    </div> 
+    <div id="y"> 
+    </div> 
+    <div id="z"> 
+    </div>
+	</div>
+	<div data-role="footer">
+		<h4>Page Footer</h4>
+	</div>
+  -->
+</div>
+
+<div data-role="dialog" id="connect">
+  
+  <div data-role="header">
+       <h1>Connect</h1>
+       <a href="#index" class="ui-btn-right">Cancel</a>
+  </div>
+
+	<div data-role="footer">
+		<h4>Page Footer</h4>
+	</div>
+</div>
+
+
+
+  <script type="text/javascript" charset="utf-8" async defer> 
+
+//var socket = new WebSocket("ws://178.79.140.38:8080/iphone");
+var socket = new WebSocket("ws://169.254.172.85:8080/iphone");
+//var socket = new WebSocket("ws://10.0.1.5:8080/iphone");
+ 
+var acceleration = {x : 0, y : 0};
+var previous     = {x : 0, y : 0}; 
+
+window.ondeviceorientation = function(event) {
+    /* 
+       alpha:    0..360 (rotation around z axis) 
+       beta:  -180..180 (rotation around x axis)
+       gamma:  -90..90  (rotation around y axis) 
+    */
+    $("#beta").text("x:" + event.beta);
+    $("#gamma").text("y:" + event.gamma);
+    $("#alpha").text("z:" + event.alpha);
+    
+    acceleration.x = event.gamma;
+    acceleration.y = event.beta;
+    
+    $("#abs_x").text(Math.abs(acceleration.x - previous.x));
+    $("#abs_y").text(Math.abs(acceleration.y - previous.y));
+    
+    //socket.send(JSON.stringify(payload));
+};
+ 
+/*
+window.ondevicemotion = function(event) {
+    $("#x").text("x:" + event.accelerationIncludingGravity.x);
+    $("#y").text("y:" + event.accelerationIncludingGravity.y);
+    $("#z").text("z:" + event.accelerationIncludingGravity.z);
+  
+    acceleration.x = event.accelerationIncludingGravity.x;
+    acceleration.y = event.accelerationIncludingGravity.y;
+    
+    //socket.send(JSON.stringify(payload));
+};
+*/
+var interval = setInterval(function() {
+  
+  //var payload = {acceleration: acceleration};
+  acceleration.x = 5;
+    
+  if ((5 > Math.abs(acceleration.x - previous.x)) || 
+      (5 > Math.abs(acceleration.y - previous.y))) {
+          previous.x = acceleration.x;
+          previous.y = acceleration.y;
+          socket.send(JSON.stringify(acceleration));
+          //socket.send(JSON.stringify(payload));
+          //socket.send("acceleration", acceleration);
+  }
+}, 1000);
+
+</script>
+
+</body>
+</html>

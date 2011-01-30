@@ -30,13 +30,20 @@
 </div>
         <div class="span-20" id="content">
             
-            <p class="notice">
-              You can control this cube by tilting your iPhone. First you must pair your iPhone and desktop browser. With your iPhone go to address <b><a href="http://appelsiini.net/demo/websocket/iphone.html">appelsiini.net/ws</a></b> and enter PIN code <b id="pin">xxxx</b>. When your iPhone is connected try tilting your phone and watch the cube move on this browser.
+            <p id="instructions" class="notice">
+              You can control this cube by tilting your iPhone. First you must pair your iPhone and desktop browser. With your iPhone go to address <b><a href="http://appelsiini.net/demo/websocket/iphone.html">appelsiini.net/ws</a></b> and enter PIN code <b id="pin">xxxx</b>. 
+            </p>
+            
+            <p id="connected" class="success" style="display:none;">
+              Now try tilting your iPhone. The more you tilt the faster the cube will rotate.
+              Response rate has been degraded a bit to prevent mobile browser sending data hundreds of times
+              per second.
             </p>
 
           <canvas id="canvas" width="790" height="480">
           Sorry, this demo requires a web browser which supports HTML5 canvas!
           </canvas>
+          
           <p>
             The rotating color cube is taken from <a href="http://deanm.github.com/pre3d/">Pre3d demo gallery</a> 
             by Dean McNamee.
@@ -155,15 +162,21 @@
                 acceleration = payload.acceleration;            
             }
             if (payload.server) {
-                console.log(payload.server);            
+                if (payload.server.match(/disconnected/)) {
+                    $("#instructions").show();
+                    $("#connected").hide();  
+                    acceleration = { x: 0, y:0 };                  
+                }
             }
             if (payload.mobile) {
-                console.log(payload.mobile);            
+                if ("Mobile connected" == payload.mobile) {
+                    $("#instructions").hide();
+                    $("#connected").show();                    
+                }
             }
         };
 
         socket.onclose = function(event) {
-            console.log(event);
         };
 
     });

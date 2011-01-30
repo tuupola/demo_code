@@ -105,7 +105,10 @@ var sleeper = setInterval(function() {
         (threshold < Math.abs(acceleration.y - previous.y))) {
             previous.x = acceleration.x;
             previous.y = acceleration.y;
-            socket.send(JSON.stringify(payload));
+            try {
+                socket.send(JSON.stringify(payload));              
+            } catch(error) {
+            }
             $("#packets").text(packets++);
     }
 }, interval);

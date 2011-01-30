@@ -45,8 +45,8 @@ var threshold    = 3;
 var payload = {};
 
 var query  = $.deparam.querystring();
-//var socket = new WebSocket("ws://ws.appelsiini.net:8080/iphone/" + query.pin);
-var socket = new WebSocket("ws://192.168.1.79:8080/iphone/" + query.pin);
+var socket = new WebSocket("ws://ws.appelsiini.net:8080/iphone/" + query.pin);
+//var socket = new WebSocket("ws://192.168.1.79:8080/iphone/" + query.pin);
  
 socket.onopen = function(event) {
     payload = {mobile: "Mobile connected"}

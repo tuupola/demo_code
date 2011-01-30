@@ -1,186 +1,184 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  <title>iPhone Controlled Color Cube via Websockets</title>
-  <meta name="generator" content="Mephisto" />
-  <link rel="alternate" type="application/atom+xml" href="http://feeds.feedburner.com/tuupola" title="Atom feed" />
-  <link href="http://www.appelsiini.net/stylesheets/main2.css" rel="stylesheet" type="text/css" />
-
-  <style type="text/css">
-  #sidebar {
-    width: 0px;
-  }
-
-  #content {
-    width: 770px;
-  }
-  
-  </style>
-
+<meta content="text/html; charset=utf-8" http-equiv="content-type">
+<title>iPhone + Websockets Controlled 3D Cube</title>
+<link href="http://www.appelsiini.net/stylesheets/screen.css" media="screen" rel="stylesheet" type="text/css">
+<link href="http://www.appelsiini.net/attachments/styles.css" media="screen" rel="stylesheet" type="text/css">
+<link href="http://feeds.feedburner.com/tuupola" rel="alternate" type="application/atom+xml">
+<link href="http://www.myopenid.com/server" rel="openid.server">
+<link href="http://tuupola.myopenid.com/" rel="openid.delegate">
+<meta content="kpdZZm3glgPWE++IGp64scG0ymM5JEHVKe2HlH8Rm18=" name="verify-v1">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript"></script>
 </head>
+<body>
+    <div class="container">
+      <div class="span-20" id="header">
+        <div class="span-14">
+          <h1>iPhone Controlled 3D Cube</h1>
+          <p>Technology guy with passion for advertising.</p>
+        </div>
+        <div class="span-6 last">
+          <ul id="nav">
+              <li id="first">
+              <a href="/">weblog</a>
+            </li>
+            <li>
+              <a class="last" href="/projects">projects</a>
+            </li>
+          </ul>
+</div>
+        <div class="span-20" id="content">
+            
+            <p class="notice">
+              You can control this cube by tilting your iPhone. First you must pair your iPhone and desktop browser. With your iPhone go to address <b><a href="http://appelsiini.net/demo/websocket/iphone.html">appelsiini.net/ws</a></b> and enter PIN code <b id="pin">xxxx</b>. When your iPhone is connected try tilting your phone and watch the cube move on this browser.
+            </p>
 
-<body>    
-  <div id="wrap"> 
-    <div id="header">
-      <p>
-        <h1>iPhone Controlled Color Cube</h1><br />
-        <small>Lorem ipsum dolor sit amet.</small>
-        <ul id="nav">
-          <li id="first"><a href="/" class="active">weblog</a></li>
-          <li><a href="/projects" class="last">projects</a></li>
-          <!--
-          <li><a href="/cv" class="last">cv</a></li>
-        -->
-        </ul>
-      </p>
+          <canvas id="canvas" width="790" height="480">
+          Sorry, this demo requires a web browser which supports HTML5 canvas!
+          </canvas>
+          <p>
+            The rotating color cube is taken from <a href="http://deanm.github.com/pre3d/">Pre3d demo gallery</a> 
+            by Dean McNamee.
+          </p>
+          
+
+        </div>
+      </div>
+      <div id="footer"></div>
     </div>
-    <div id="content">
-    <div class="entry">
-    <p>
-      You can control this cube by tilting your iPhone. You must pair your iPhone and desktop browser. With your iPhone go to address <a href="http://appelsiini.net/demo/websocket/iphone.html">appelsiini.net/ws</a> and enter PIN code <b id="pin">xxxx</b>. When your iPhone says connected try tilting your phone and watch the cube on this browser.
-    </p>
     
-    <canvas id="canvas" width="765" height="570">
-      Sorry, this demo requires a web browser which supports HTML5 canvas!
-    </canvas>
+    
+      <script src="js/pre3d.js"></script>
+      <script src="js/pre3d_shape_utils.js"></script>
+      <script src="js/demo_utils.js"></script>
 
-    </div>
- 
-  <div id="sidebar">
-  </div>
-  
-  <div id="footer">
-  </div>
+    <script type="text/javascript" charset="utf-8">
+    $(function() {
 
-  <script src="http://code.jquery.com/jquery-1.4.3.min.js" type="text/javascript" charset="utf-8"></script>
-  <script src="js/pre3d.js"></script>
-  <script src="js/pre3d_shape_utils.js"></script>
-  <script src="js/demo_utils.js"></script>
- 
-<script type="text/javascript" charset="utf-8">
-$(function() {
- 
-    var black = new Pre3d.RGBA(0, 0, 0, 1);
-    var white = new Pre3d.RGBA(1, 1, 1, 1);
+        var black = new Pre3d.RGBA(0, 0, 0, 1);
+        var white = new Pre3d.RGBA(1, 1, 1, 1);
 
-    var screen_canvas = document.getElementById('canvas');
-    var renderer = new Pre3d.Renderer(screen_canvas);
+        var screen_canvas = document.getElementById('canvas');
+        var renderer = new Pre3d.Renderer(screen_canvas);
 
-    var cubes = [ ];
+        var cubes = [ ];
 
-    for (var i = 0; i < 10; ++i) {
-        for (var j = 0; j < 10; ++j) {
-            for (var k = 0; k < 10; ++k) {
-                if (i == 0 || j == 0 || k == 0 ||
-                    i == 9 || j == 9 || k == 9) {
-                var cube = Pre3d.ShapeUtils.makeCube(0.5);
-                var transform = new Pre3d.Transform();
-                transform.translate(i - 5, j - 5, k - 5);
-                cubes.push({
-                    shape: cube,
-                    color: new Pre3d.RGBA(i / 10, j / 10, k / 10, 0.3),
-                    trans: transform});
+        for (var i = 0; i < 10; ++i) {
+            for (var j = 0; j < 10; ++j) {
+                for (var k = 0; k < 10; ++k) {
+                    if (i == 0 || j == 0 || k == 0 ||
+                        i == 9 || j == 9 || k == 9) {
+                    var cube = Pre3d.ShapeUtils.makeCube(0.5);
+                    var transform = new Pre3d.Transform();
+                    transform.translate(i - 5, j - 5, k - 5);
+                    cubes.push({
+                        shape: cube,
+                        color: new Pre3d.RGBA(i / 10, j / 10, k / 10, 0.3),
+                        trans: transform});
+                    }
                 }
             }
         }
-    }
 
-    var num_cubes = cubes.length;
+        var num_cubes = cubes.length;
 
-    function draw() {
-        for (var i = 0; i < num_cubes; ++i) {
-            var cube = cubes[i];
-            renderer.fill_rgba = cube.color;
-            renderer.transform = cube.trans;
-            renderer.bufferShape(cube.shape);
+        function draw() {
+            for (var i = 0; i < num_cubes; ++i) {
+                var cube = cubes[i];
+                renderer.fill_rgba = cube.color;
+                renderer.transform = cube.trans;
+                renderer.bufferShape(cube.shape);
+            }
+
+            renderer.ctx.setFillColor(0, 0, 0, 1);
+            renderer.drawBackground();
+            renderer.drawBuffer();
+            renderer.emptyBuffer();
         }
 
-        renderer.ctx.setFillColor(0, 0, 0, 1);
-        renderer.drawBackground();
-        renderer.drawBuffer();
-        renderer.emptyBuffer();
-    }
+        renderer.camera.focal_length = 2.5;
 
-    renderer.camera.focal_length = 2.5;
+        var camera_state = {
+            rotate_x: 10,
+            rotate_y: 0,
+            rotate_z: -30,
+            x: 0.40,
+            y: -1.06,
+            z: -30
+        };
 
-    var camera_state = {
-        rotate_x: 10,
-        rotate_y: 0,
-        rotate_z: -30,
-        x: 0.40,
-        y: -1.06,
-        z: -30
-    };
-
-    function set_camera() {
-        var ct = renderer.camera.transform;
-        ct.reset();
-        ct.rotateZ(camera_state.rotate_z);
-        ct.rotateY(camera_state.rotate_y);
-        ct.rotateX(camera_state.rotate_x);
-        ct.translate(camera_state.x, camera_state.y, camera_state.z);
-    }
-
-    var acceleration = { x: 0, y:0 };
-
-    var interval = setInterval(function() {
-        camera_state.rotate_y -= acceleration.x * 0.005;
-        camera_state.rotate_x += acceleration.y * 0.005;
-        set_camera();
-        draw();
-    }, 1);
-
-    
-    function pad(number, length) {
-
-        var str = '' + number;
-        while (str.length < length) {
-            str = '0' + str;
+        function set_camera() {
+            var ct = renderer.camera.transform;
+            ct.reset();
+            ct.rotateZ(camera_state.rotate_z);
+            ct.rotateY(camera_state.rotate_y);
+            ct.rotateX(camera_state.rotate_x);
+            ct.translate(camera_state.x, camera_state.y, camera_state.z);
         }
 
-        return str;
-    }
-    
-    
-    var acceleration = {x : 0, y : 0};
-    
-    var pin = pad(Math.floor(Math.random() * 9999), 4);
-    $("#pin").text(pin);
-    
-    // var socket = new WebSocket("ws://ws.appelsiini.net:8080/iphone/" + pin);
-    var socket = new WebSocket("ws://192.168.1.79:8080/iphone/" + pin);
+        var acceleration = { x: 0, y:0 };
 
-    socket.onopen = function(event) {
-    };
+        var interval = setInterval(function() {
+            camera_state.rotate_y -= acceleration.x * 0.005;
+            camera_state.rotate_x += acceleration.y * 0.005;
+            set_camera();
+            draw();
+        }, 10);
 
-    socket.onmessage = function(event) {
-        var payload = JSON.parse(event.data);
-        if (payload.acceleration) {
-            acceleration = payload.acceleration;            
+
+        function pad(number, length) {
+
+            var str = '' + number;
+            while (str.length < length) {
+                str = '0' + str;
+            }
+
+            return str;
         }
-        if (payload.server) {
-            console.log(payload.server);            
-        }
-        if (payload.mobile) {
-            console.log(payload.mobile);            
-        }
-    };
 
-    socket.onclose = function(event) {
-        console.log(event);
-    };
+
+        var acceleration = {x : 0, y : 0};
+
+        var pin = pad(Math.floor(Math.random() * 9999), 4);
+        $("#pin").text(pin);
+
+        var socket = new WebSocket("ws://ws.appelsiini.net:8080/iphone/" + pin);
+        //var socket = new WebSocket("ws://192.168.1.79:8080/iphone/" + pin);
+
+        socket.onopen = function(event) {
+        };
+
+        socket.onmessage = function(event) {
+            var payload = JSON.parse(event.data);
+            if (payload.acceleration) {
+                acceleration = payload.acceleration;            
+            }
+            if (payload.server) {
+                console.log(payload.server);            
+            }
+            if (payload.mobile) {
+                console.log(payload.mobile);            
+            }
+        };
+
+        socket.onclose = function(event) {
+            console.log(event);
+        };
+
+    });
+    </script>
     
-});
-</script>
-   
-  <script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
-  <script type="text/javascript">
-    _uacct = "UA-190966-1";
-    //urchinTracker();
-  </script>
-
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-190966-1']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
 </body>
 </html>
 

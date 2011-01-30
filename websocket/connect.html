@@ -49,7 +49,7 @@ $(function() {
 var acceleration = {x : 0, y : 0};
 var previous     = {x : 0, y : 0}; 
 
-var threshold    = 3;
+var threshold    = 2;
 var interval     = 250;
 var payload      = {};
 var packets      = 0;
@@ -63,39 +63,40 @@ socket.onopen = function(event) {
     socket.send(JSON.stringify(payload));
 };
 
-window.ondeviceorientation = function(event) {
 
-    /* beta:  -180..180 (rotation around x axis) */
-    /* gamma:  -90..90  (rotation around y axis) */
-    /* alpha:    0..360 (rotation around z axis) */
+/* Check if we have device with Gyroscope (iPhone 4 or iPod Touch 4G). */
+if ("ondeviceorientation" in window) {
+    window.ondeviceorientation = function(event) {
 
-    /* jQuery mobile cannot handle negative minimum value.      */
-    /* so I have to use zero based value to display the slider. */
+        /* beta:  -180..180 (rotation around x axis) */
+        /* gamma:  -90..90  (rotation around y axis) */
+        /* alpha:    0..360 (rotation around z axis) */
 
-    $("#beta").val(event.beta * 1 + 180).trigger("keyup");;
-    $("#gamma").val(event.gamma * 1 + 90).trigger("keyup");;
-    //$("#alpha").val(event.alpha * 1).trigger("keyup");;
+        /* jQuery mobile cannot handle negative minimum value.      */
+        /* so I have to use zero based value to display the slider. */
+
+        $("#beta").val(event.beta * 1 + 180).trigger("keyup");;
+        $("#gamma").val(event.gamma * 1 + 90).trigger("keyup");;
+        //$("#alpha").val(event.alpha * 1).trigger("keyup");;
     
-    acceleration.x = event.gamma;
-    acceleration.y = event.beta;    
+        acceleration.x = event.gamma;
+        acceleration.y = event.beta;    
+    };
+
+/* Check if we have device with acceleration sensors (all older Apple devices) */
+} else if ("ondevicemotion" in window) {
+
+    window.ondevicemotion = function(event) {
+        /* Acceleration sensors give smaller number thus we multiply */
+        /* to have similar rates as with gyroscope.                  */
+        acceleration.x = event.accelerationIncludingGravity.x * 7;
+        acceleration.y = event.accelerationIncludingGravity.y * 7;
+    };
 };
- 
-/*
-window.ondevicemotion = function(event) {
-    $("#x").text("x:" + event.accelerationIncludingGravity.x);
-    $("#y").text("y:" + event.accelerationIncludingGravity.y);
-    $("#z").text("z:" + event.accelerationIncludingGravity.z);
-  
-    acceleration.x = event.accelerationIncludingGravity.x;
-    acceleration.y = event.accelerationIncludingGravity.y;
-    
-    //socket.send(JSON.stringify(payload));
-};
-*/
 
 /* Reduce the amount of data to be sent in two ways. 1) Only send every */
 /* interval milliseconds and 2) Only send if user has tilted the phone  */
-/* more than threshold. */
+/* more than threshold.                                                 */
 var sleeper = setInterval(function() {    
      
     payload = {acceleration: acceleration};

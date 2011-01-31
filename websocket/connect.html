@@ -29,10 +29,9 @@
    	  <br />
   	  <label for="y">Y:</label>
    	  <input type="range" name="gamma" id="gamma" value="0" min="0" max="180" style="display:none;" />
-   	  <!--
+   	  <br />
   	  <label for="z">Z:</label>
-   	  <input type="range" name="alpha" id="alpha" value="0" min="0" max="360"  />
-   	  -->
+   	  <input type="range" name="alpha" id="alpha" value="0" min="0" max="360" style="display:none;" />
     </div>
   </div>
   
@@ -46,16 +45,17 @@
 
 $(function() {
 
-var acceleration = {x : 0, y : 0};
-var previous     = {x : 0, y : 0}; 
+var data      = {x : 0, y : 0, z: 0};
+var previous  = {x : 0, y : 0, z: 0}; 
 
-var threshold    = 2;
-var interval     = 250;
-var payload      = {};
-var packets      = 0;
+var threshold = 2;
+var interval  = 20;
+var payload   = {};
+var packets   = 0;
 
 var query  = $.deparam.querystring();
 var socket = new WebSocket("ws://ws.appelsiini.net:8080/iphone/" + query.pin);
+//var socket = new WebSocket("ws://ws.appelsiini.net:8080/iphone");
  
 socket.onopen = function(event) {
     /* Notify desktop we just connected. */
@@ -66,46 +66,56 @@ socket.onopen = function(event) {
 
 /* Check if we have device with Gyroscope (iPhone 4 or iPod Touch 4G). */
 if ("ondeviceorientation" in window) {
+      
     window.ondeviceorientation = function(event) {
 
         /* beta:  -180..180 (rotation around x axis) */
         /* gamma:  -90..90  (rotation around y axis) */
-        /* alpha:    0..360 (rotation around z axis) */
-
+        /* alpha:    0..360 (rotation around z axis) (-180..180) */
+    
+        data.x = Math.round(event.beta);
+        data.y = Math.round(event.gamma);
+        data.z = Math.round(event.alpha);
+        
         /* jQuery mobile cannot handle negative minimum value.      */
         /* so I have to use zero based value to display the slider. */
-
-        $("#beta").val(event.beta * 1 + 180).trigger("keyup");;
-        $("#gamma").val(event.gamma * 1 + 90).trigger("keyup");;
-        //$("#alpha").val(event.alpha * 1).trigger("keyup");;
-    
-        acceleration.x = event.gamma;
-        acceleration.y = event.beta;    
+        $("#beta").val(data.x * 1 + 180).trigger("keyup");
+        $("#gamma").val(data.y * 1 + 90).trigger("keyup");
+        $("#alpha").val(data.z * 1 + 180).trigger("keyup");
+        
+        payload = {type: "orientation", data: data};
     };
 
 /* Check if we have device with accelerometer (all older Apple devices) */
 } else if ("ondevicemotion" in window) {
 
     window.ondevicemotion = function(event) {
+      
+        threshold = 5;
         /* Accelerometers give smaller number thus we multiply */
         /* to have similar rates as with gyroscope.            */
-        acceleration.x = event.accelerationIncludingGravity.x * 7;
-        acceleration.y = event.accelerationIncludingGravity.y * 7;
+        data.x = Math.round(event.accelerationIncludingGravity.x * 10);
+        data.y = Math.round(event.accelerationIncludingGravity.y * 10);
+        /*data.z = Math.round(event.accelerationIncludingGravity.z * 10);*/   
+        
+        /* jQuery mobile cannot handle negative minimum value.      */
+        /* so I have to use zero based value to display the slider. */
+        $("#beta").val(data.x * 1 + 180).trigger("keyup");
+        $("#gamma").val(data.y * 1 + 90).trigger("keyup");
+        
+        payload = {type: "acceleration", data: data};
     };
 };
 
 /* Reduce the amount of data to be sent in two ways. 1) Only send every */
 /* interval milliseconds and 2) Only send if user has tilted the phone  */
 /* more than threshold.                                                 */
-var sleeper = setInterval(function() {    
-     
-    payload = {acceleration: acceleration};
-    
-     
-    if ((threshold < Math.abs(acceleration.x - previous.x)) || 
-        (threshold < Math.abs(acceleration.y - previous.y))) {
-            previous.x = acceleration.x;
-            previous.y = acceleration.y;
+var sleeper = setInterval(function() {
+  
+    if ((threshold < Math.abs(data.x - previous.x)) || 
+        (threshold < Math.abs(data.y - previous.y))) {
+            previous.x = data.x;
+            previous.y = data.y;
             try {
                 socket.send(JSON.stringify(payload));              
             } catch(error) {

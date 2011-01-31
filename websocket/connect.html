@@ -83,12 +83,12 @@ if ("ondeviceorientation" in window) {
         acceleration.y = event.beta;    
     };
 
-/* Check if we have device with acceleration sensors (all older Apple devices) */
+/* Check if we have device with accelerometer (all older Apple devices) */
 } else if ("ondevicemotion" in window) {
 
     window.ondevicemotion = function(event) {
-        /* Acceleration sensors give smaller number thus we multiply */
-        /* to have similar rates as with gyroscope.                  */
+        /* Accelerometers give smaller number thus we multiply */
+        /* to have similar rates as with gyroscope.            */
         acceleration.x = event.accelerationIncludingGravity.x * 7;
         acceleration.y = event.accelerationIncludingGravity.y * 7;
     };

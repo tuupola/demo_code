@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-  <title>Spinning HTML5Logo</title>
+  <title>iPhone Orientation Tracking HTML5 logo</title>
   <link rel="stylesheet" href="http://www.appelsiini.net/stylesheets/screen.css">
   <link rel="stylesheet" href="http://www.appelsiini.net/attachments/styles.css">
   <link href="http://feeds.feedburner.com/tuupola" rel="alternate" type="application/atom+xml">
@@ -10,51 +10,12 @@
   <meta content="kpdZZm3glgPWE++IGp64scG0ymM5JEHVKe2HlH8Rm18=" name="verify-v1">
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js" type="text/javascript" charset="utf-8"></script>
   <style>
+  
    /*
-    * Spinning HTML5Logo Demo
+    * Spinning HTML5Logo Demo taken from http://code.bocoup.com/html5logo-3d/
     * by @boazsender: http://boazsender.com
-    * Thanks to http://webkit.org/blog/386/3d-transforms/
-    *
+    * Thanks to http://webkit.org/blog/386/3d-transforms/   
     */ 
-    
-    @-webkit-keyframes none {
-    }
-    
-    @-webkit-keyframes elevator-down {
-      0%    { -webkit-transform: rotateX(0deg); }
-      50%   { -webkit-transform: rotateX(180deg); }
-      100%  { -webkit-transform: rotateX(360deg); }
-    }
-
-    @-webkit-keyframes elevator-up {
-      0%    { -webkit-transform: rotateX(360deg); }
-      50%   { -webkit-transform: rotateX(180deg); }
-      100%  { -webkit-transform: rotateX(0deg); }
-    }
-
-    @-webkit-keyframes aileron-right {
-      0%    { -webkit-transform: rotateZ(0deg); }
-      50%   { -webkit-transform: rotateZ(180deg); }
-      100%  { -webkit-transform: rotateZ(360deg); }
-    }
-
-    @-webkit-keyframes aileron-left {
-      0%    { -webkit-transform: rotateZ(360deg); }
-      50%   { -webkit-transform: rotateZ(180deg); }
-      100%  { -webkit-transform: rotateZ(0deg); }
-    }
-
-    @-webkit-keyframes pitch-right {
-      0%    { -webkit-transform: rotateY(360deg); }
-      50%   { -webkit-transform: rotateY(180deg); }
-      100%  { -webkit-transform: rotateY(0deg); }
-    }
-    
-    @-webkit-keyframes pitch-left {
-      0%    { -webkit-transform: rotateY(0deg); }
-      50%   { -webkit-transform: rotateY(180deg); }
-      100%  { -webkit-transform: rotateY(360deg); }
-    }
 
     body {
       -webkit-perspective: 800; 
@@ -69,35 +30,25 @@
     #elevator {
       -webkit-perspective-origin: 50% 50%;
       -webkit-transform-style: preserve-3d;
-      /*-webkit-animation: x-spin 10s infinite linear;*/
-      -webkit-transition: -webkit-transform 1s linear
       position: relative;
-      top: 200px;
+      top: 100px;
       margin: 0 auto;
       width: 200px;
     }
     
     #pitch {
       -webkit-transform-style: preserve-3d;
-      -webkit-animation-name: z-spin;
-      -webkit-animation-duration: 5s;
-      -webkit-animation-iteration-count: infinite;
-      -webkit-animation-timing-function: linear;
     }
     
     #aileron {
       -webkit-transform-style: preserve-3d;
-      -webkit-animation-name: y-spin;
-      -webkit-animation-duration: 5s;
-      -webkit-animation-iteration-count: infinite;
-      -webkit-animation-timing-function: linear;
     }
     
     #aileron > img {
       -webkit-backface-visibility: visible;
+      -webkit-transition: all 1s;
       position: absolute;
       height: 120px;
-      -webkit-transition: all .4s;
       border: 0px solid #fff;
     }
 
@@ -129,8 +80,8 @@
 <div class="container">
   <div class="span-20" id="header">
     <div class="span-14">
-    <h1>iPhone Contaileroned Cube</h1>
-    <p>Technology guy with passion for advertising.</p>
+    <h1>iPhone Tracking HTML5 logo</h1>
+    <p>Contains way too many buzzwords: HTML5, CSS transformations, Websockets, Event Machine...</p>
   </div>
 
   <div class="span-6 last">
@@ -142,15 +93,16 @@
 
   <div class="span-20" id="content">        
     <p id="instructions" class="notice">
-      You can control this cube by tilting your iPhone. First you must pair your iPhone and desktop browser. 
-      With your iPhone go to address <b><a href="http://appelsiini.net/demo/websocket/iphone.html">appelsiini.net/ws</a></b>
+      HTML5 logo below will track the orientation of your iPhone or iPod. You must have IOS 4.2 installed.
+      To start you must pair your IOS device and desktop browser. You can do this by visiting address 
+      <b><a href="http://appelsiini.net/demo/websocket/iphone.html">appelsiini.net/ws</a></b> with your iPhone or iPad
       and enter PIN code <b id="pin">xxxx</b>. 
     </p>
 
     <p id="connected" class="success" style="display:none;">
-      Now try tilting your iPhone. The more you tilt the faster the cube will rotate.
-      Response rate has been degraded on purpose to prevent mobile browser sending data 
-      50 times per second.
+      Now try tilting and turning your iPhone or iPad. HTML5 logo below will track the orientation of your IOS device.
+      Since iPhone 4 or iPod Touch 4G have gyroscopes tracking will be more accurate. Response rate in this demo has 
+      been degraded on purpose to prevent mobile browser sending data  50 times per second.
     </p>
     
     <div id="elevator">

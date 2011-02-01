@@ -49,13 +49,12 @@ var data      = {x : 0, y : 0, z: 0};
 var previous  = {x : 0, y : 0, z: 0}; 
 
 var threshold = 2;
-var interval  = 20;
+var interval  = 40;
 var payload   = {};
 var packets   = 0;
 
 var query  = $.deparam.querystring();
 var socket = new WebSocket("ws://ws.appelsiini.net:8080/iphone/" + query.pin);
-//var socket = new WebSocket("ws://ws.appelsiini.net:8080/iphone");
  
 socket.onopen = function(event) {
     /* Notify desktop we just connected. */
@@ -113,9 +112,11 @@ if ("ondeviceorientation" in window) {
 var sleeper = setInterval(function() {
   
     if ((threshold < Math.abs(data.x - previous.x)) || 
-        (threshold < Math.abs(data.y - previous.y))) {
+        (threshold < Math.abs(data.y - previous.y)) ||
+        (threshold < Math.abs(data.z - previous.z))) {
             previous.x = data.x;
             previous.y = data.y;
+            previous.z = data.z;
             try {
                 socket.send(JSON.stringify(payload));              
             } catch(error) {

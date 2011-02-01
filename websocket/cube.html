@@ -2,7 +2,7 @@
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <meta content="text/html; charset=utf-8" http-equiv="content-type">
-  <title>iPhone + Websockets Controlled 3D Cube</title>
+  <title>iPhone Controlled 3D Cube Via Websockets</title>
   <link href="http://www.appelsiini.net/stylesheets/screen.css" media="screen" rel="stylesheet" type="text/css">
   <link href="http://www.appelsiini.net/attachments/styles.css" media="screen" rel="stylesheet" type="text/css">
   <link href="http://feeds.feedburner.com/tuupola" rel="alternate" type="application/atom+xml">
@@ -17,7 +17,7 @@
   <div class="span-20" id="header">
     <div class="span-14">
     <h1>iPhone Controlled Cube</h1>
-    <p>Technology guy with passion for advertising.</p>
+    <p>Contains way too many buzzwords: HTML5, Websockets, Event Machine...</p>
   </div>
   
   <div class="span-6 last">
@@ -29,24 +29,27 @@
   
   <div class="span-20" id="content">        
     <p id="instructions" class="notice">
-      You can control this cube by tilting your iPhone. First you must pair your iPhone and desktop browser. 
-      With your iPhone go to address <b><a href="http://appelsiini.net/demo/websocket/iphone.html">appelsiini.net/ws</a></b>
-      and enter PIN code <b id="pin">xxxx</b>. 
+      You can control this cube by tilting iPhone or iPod. You must have IOS 4.2 installed.
+      To start you must pair your IOS device and desktop browser. You can do this by visiting address 
+      <b><a href="http://appelsiini.net/demo/websocket/iphone.html">appelsiini.net/ws</a></b> with your iPhone or iPad
+      and enter PIN code <b id="pin">xxxx</b>.
     </p>
             
     <p id="connected" class="success" style="display:none;">
-      Now try tilting your iPhone. The more you tilt the faster the cube will rotate.
-      Response rate has been degraded on purpose to prevent mobile browser sending data 
-      50 times per second.
+      Now try tilting your iPhone or iPad. The more you tilt the faster cube will spin. This demo will track only
+      roll and pitch axis. Response rate in this demo has  been degraded on purpose to prevent 
+      mobile browser sending data  50 times per second.
     </p>
 
     <canvas id="canvas" width="790" height="480">
       Sorry, this demo requires a web browser which supports HTML5 canvas!
     </canvas>
-          
-    <p>
+    
+    <br />
+    <br />
+    <p class="notice">
       The rotating color cube is taken from <a href="http://deanm.github.com/pre3d/">Pre3d demo gallery</a> 
-      by Dean McNamee.
+      by <a href="http://www.deanmcnamee.com/">Dean McNamee</a>.
     </p>
   </div>
 </div>
@@ -126,11 +129,12 @@ $(function() {
 
     /* Websocket related code starts here... */
 
-    var acceleration = { x: 0, y:0 };
+    var acceleration = { x: 0, y:0, z:0 };
 
     var sleeper = setInterval(function() {
-        camera_state.rotate_y -= acceleration.x * 0.005;
-        camera_state.rotate_x += acceleration.y * 0.005;
+        camera_state.rotate_y -= acceleration.y * 0.003;
+        camera_state.rotate_x += acceleration.x * 0.003;
+        camera_state.rotate_z += acceleration.z * 0.003;
         set_camera();
         draw();
     }, 10);
@@ -156,14 +160,23 @@ $(function() {
 
     socket.onmessage = function(event) {
         var payload = JSON.parse(event.data);
-        if (payload.acceleration) {
-            acceleration = payload.acceleration;            
-        }
+        if (payload.data) {
+            if ("orientation" == payload.type) {
+                acceleration.x =  payload.data.x;
+                acceleration.z =  payload.data.y;
+                //acceleration.y =  payload.data.z;
+                acceleration.y = 0;
+            } else {
+                acceleration.x = payload.data.y * -1;
+                acceleration.z = payload.data.x;
+                acceleration.y = 0;
+            }
+        }    
         if (payload.server) {
             if (payload.server.match(/disconnected/)) {
                 $("#instructions").show();
                 $("#connected").hide();  
-                acceleration = { x: 0, y:0 };                  
+                acceleration = { x: 0, y:0, z:0 };                  
             }
         }
         if (payload.mobile) {

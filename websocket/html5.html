@@ -139,7 +139,12 @@
 
 <script type="text/javascript" charset="utf-8">
 $(function() {
-    
+
+    /* Stop the animations. */
+    $("#elevator").css("-webkitAnimationName", "none");
+    $("#aileron").css("-webkitAnimationName", "none");
+    $("#pitch").css("-webkitAnimationName", "none");    
+
     function pad(number, length) {
         var str = '' + number;
         while (str.length < length) {

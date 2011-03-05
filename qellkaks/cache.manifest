@@ -1,0 +1,10 @@
+CACHE MANIFEST
+# Version 1
+NETWORK:
+http://www.google-analytics.com/
+CACHE:
+https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js
+/css/qellkaks.css
+/css/reset.css
+/js/qellkaks.css
+/img/120x120png

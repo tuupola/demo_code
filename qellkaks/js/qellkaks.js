@@ -122,7 +122,6 @@ Qlock.method("words", function() {
         hours = 0;
     }
     
-    console.log("HOURS: " + hours)
     switch(hours) {
     case 0:
         words.push("kaks-2");

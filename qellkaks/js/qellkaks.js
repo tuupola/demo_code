@@ -161,3 +161,59 @@ Qlock.method("words", function() {
                     
     return words;
 });
+
+$(function() {
+    
+    
+    $(window).bind("resize", function() {
+        if ($(window).height() > $(window).width()) {
+            var new_size = parseInt($(window).width() / 20);
+            $("#qlock > div ").css("font-size", new_size);
+        } else {
+            var new_size = parseInt($(window).height() / 20);
+            $("#qlock > div ").css("font-size", new_size);            
+        }
+    }).trigger("resize");
+    
+  
+    if (window.location.search.match(/test/)) {
+        /* Test code to run one day in loop. */
+        
+        var now = new Date();
+        now.setHours(0);
+        now.setMinutes(0);
+
+        var minutes = 0;
+        var interval = setInterval(function() {
+            var qlock = new Qlock(now);
+            
+            minutes++;
+            var next_minute = new Date(now.getTime() + minutes * 60000);            
+            qlock.update(next_minute);   
+            console.log(qlock.date.getRoundedHours() + ":" + qlock.date.getRoundedMinutes() + "-" + qlock.date.getHours() + ":" + qlock.date.getMinutes());
+            $("#qlock > div > span").removeClass("active");
+            $.each(qlock.words(), function(index, value) {
+                $("#" + value).addClass("active");
+            });
+            if (1440 == minutes) {
+                clearInterval(interval);
+            }
+        }, 500);
+        
+    } else {
+        
+        /* Normal code updated every second. */
+        var interval = setInterval(function() {
+            var now   = new Date();
+            var qlock = new Qlock(now);
+            
+            $("#qlock > div > span").removeClass("active");
+            
+            $.each(qlock.words(), function(index, value) {
+                $("#" + value).addClass("active");
+            });
+
+        }, 1000);         
+    }
+
+});

@@ -5,28 +5,8 @@
   <title>QELLKAKS (QLOCKTWO in Estonian)</title>
   <script type="text/javascript" src="http://use.typekit.com/txt4vml.js"></script>
   <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
-  <style type="text/css" media="screen">
-    body {
-      background-color: black; 
-    }
-  
-    #qlock {
-      text-align: center;
-    }
-    
-    #qlock > div {
-      color: #444;
-      font-size: 40px;
-      letter-spacing: 1em;
-      font-family: "botanika-mono-web-1","botanika-mono-web-2";  
-      text-transform: uppercase;
-    }
-    
-    #qlock > div > span.active {
-       color: #fff; 
-       text-shadow: 0px 0px 4px #fff;
-    }
-  </style>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/qellkaks.css?v=1">
 </head>
 <body>
   
@@ -45,69 +25,9 @@
     <div><span id="seitse">seitse</span><span id="uheksa">üheksa</span></div>
     <div><span id="kumme-2">kümme</span>si<span id="labi">läbi</span>t</div>
   </div>
-    
-    
+        
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-  <script src="qellkaks.js" type="text/javascript" charset="utf-8"></script>
-  <script type="text/javascript" charset="utf-8">
-      
-    $(function() {
-        
-        
-        $(window).bind("resize", function() {
-            if ($(window).height() > $(window).width()) {
-                var new_size = parseInt($(window).width() / 20);
-                $("#qlock > div ").css("font-size", new_size);
-            } else {
-                var new_size = parseInt($(window).height() / 20);
-                $("#qlock > div ").css("font-size", new_size);            
-            }
-        }).trigger("resize");
-        
-      
-        if (window.location.search.match(/test/)) {
-            /* Test code to run one day in loop. */
-            
-            var now = new Date();
-            now.setHours(0);
-            now.setMinutes(0);
+  <script src="js/qellkaks.js?v=2" type="text/javascript" charset="utf-8"></script>
 
-            var minutes = 0;
-            var interval = setInterval(function() {
-                var qlock = new Qlock(now);
-                
-                minutes++;
-                var next_minute = new Date(now.getTime() + minutes * 60000);            
-                qlock.update(next_minute);   
-                console.log(qlock.date.getRoundedHours() + ":" + qlock.date.getRoundedMinutes() + "-" + qlock.date.getHours() + ":" + qlock.date.getMinutes());
-                $("#qlock > div > span").removeClass("active");
-                $.each(qlock.words(), function(index, value) {
-                    $("#" + value).addClass("active");
-                });
-                if (1440 == minutes) {
-                    clearInterval(interval);
-                }
-            }, 500);
-            
-        } else {
-            
-            /* Normal code updated every second. */
-            var interval = setInterval(function() {
-                var now   = new Date();
-                var qlock = new Qlock(now);
-                
-                $("#qlock > div > span").removeClass("active");
-                
-                $.each(qlock.words(), function(index, value) {
-                    $("#" + value).addClass("active");
-                });
-
-            }, 1000);         
-        }
-
-    });
-  
-    
-  </script>
 </body>
 </html>

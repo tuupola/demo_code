@@ -190,7 +190,7 @@ $(function() {
             minutes++;
             var next_minute = new Date(now.getTime() + minutes * 60000);            
             qlock.update(next_minute);   
-            console.log(qlock.date.getRoundedHours() + ":" + qlock.date.getRoundedMinutes() + "-" + qlock.date.getHours() + ":" + qlock.date.getMinutes());
+            // console.log(qlock.date.getRoundedHours() + ":" + qlock.date.getRoundedMinutes() + "-" + qlock.date.getHours() + ":" + qlock.date.getMinutes());
             $("#qlock > div > span").removeClass("active");
             $.each(qlock.words(), function(index, value) {
                 $("#" + value).addClass("active");

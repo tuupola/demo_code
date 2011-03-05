@@ -118,7 +118,7 @@ Qlock.method("words", function() {
         hours = hours - 12;
     }
 
-    if (hours = 12) {
+    if (12 == hours) {
         hours = 0;
     }
     

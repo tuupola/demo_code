@@ -1,0 +1,23 @@
+body {
+  background-color: black; 
+  overflow: hidden;
+}
+
+#qlock {
+  padding: 40px 0;
+  text-align: center;
+}
+
+#qlock > div {
+  color: #444;
+  font-size: 40px;
+  letter-spacing: 1em;
+  line-height: 1.3em;
+  font-family: "botanika-mono-web-1","botanika-mono-web-2";  
+  text-transform: uppercase;
+}
+
+#qlock > div > span.active {
+   color: #fff; 
+   text-shadow: 0px 0px 4px #fff;
+}

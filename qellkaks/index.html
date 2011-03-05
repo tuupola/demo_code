@@ -83,7 +83,9 @@
             var interval = setInterval(function() {
                 var now   = new Date();
                 var qlock = new Qlock(now);
-
+                
+                $("#qlock > div > span").removeClass("active");
+                
                 $.each(qlock.words(), function(index, value) {
                     $("#" + value).addClass("active");
                 });

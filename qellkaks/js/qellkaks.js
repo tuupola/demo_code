@@ -117,7 +117,12 @@ Qlock.method("words", function() {
     if (hours > 11) {
         hours = hours - 12;
     }
+
+    if (hours = 12) {
+        hours = 0;
+    }
     
+    console.log("HOURS: " + hours)
     switch(hours) {
     case 0:
         words.push("kaks-2");

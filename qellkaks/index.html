@@ -17,7 +17,7 @@
     #qlock > div {
       color: #444;
       font-size: 40px;
-      letter-spacing: 40px;
+      letter-spacing: 1em;
       font-family: "botanika-mono-web-1","botanika-mono-web-2";  
       text-transform: uppercase;
     }
@@ -52,6 +52,18 @@
   <script type="text/javascript" charset="utf-8">
       
     $(function() {
+        
+        
+        $(window).bind("resize", function() {
+            if ($(window).height() > $(window).width()) {
+                var new_size = parseInt($(window).width() / 20);
+                $("#qlock > div ").css("font-size", new_size);
+            } else {
+                var new_size = parseInt($(window).height() / 20);
+                $("#qlock > div ").css("font-size", new_size);            
+            }
+        }).trigger("resize");
+        
       
         if (window.location.search.match(/test/)) {
             /* Test code to run one day in loop. */

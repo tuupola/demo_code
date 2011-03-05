@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>QELLKAKS (QLOCKTWO in Estonian)</title>
+  <style type="text/css" media="screen">
+    body {
+      background-color: black; 
+    }
+  
+    #qlock {
+      color: #444;
+      font-family: monospace;
+      font-size: 40px;
+      text-align: center;
+    }
+    
+    #qlock > div {
+      letter-spacing: 20px;
+      text-transform: uppercase;
+    }
+    
+    #qlock > div > span.active {
+       color: #fff; 
+       text-shadow: 0px 0px 4px #fff;
+    }
+  </style>
+</head>
+<body>
+  
+  <div id="qlock">
+    <div><span id="kell">kell</span>a<span id="on">on</span>u<span id="kolm-1">kolm</span></div>
+    <div><span id="pool">pool</span>a<span id="veerand">veerand<span></div>
+    <div>e<span id="kaks-1">kaks</span><span id="kumme-1">kümme</span><span id="nd">nd</spab></span></div>
+    <div><span id="viis-1">viis</span>k<span id="palju">palju</span>de</div>
+    <div><span id="kahe">kahe</span><span id="kumne">kümne</span>lja</div>
+    <div><span id="viie">viie</span>s<span id="minuti">minuti</span><span id="t">t</span></div>
+    <div><span id="parast">pärast</span>meline</div>
+    <div><span id="uks">üks</span><span id="teist-1">teist</span><span id="kaes">käes</span></div>
+    <div><span id="kolm-2">kolm</span><span id="kaheksa">kaheksa</span>s</div>
+    <div>oma<span id="kaks-2">kaks</span><span id="teist-2">teist</span></div>
+    <div><span id="viis-2">viis</span><span id="kuus">kuus</span><span id="neli">neli</span></div>
+    <div><span id="seitse">seitse</span><span id="uheksa">üheksa</span></div>
+    <div><span id="kumme-2">kümme</span>si<span id="labi">läbi</span>t</div>
+  </div>
+    
+    
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="qellkaks.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+      
+    $(function() {
+      
+        if (window.location.search.match(/test/)) {
+            /* Test code to run one day in loop. */
+            
+            var now = new Date();
+            now.setHours(0);
+            now.setMinutes(0);
+
+            var minutes = 0;
+            var interval = setInterval(function() {
+                var qlock = new Qlock(now);
+                
+                minutes++;
+                var next_minute = new Date(now.getTime() + minutes * 60000);            
+                qlock.update(next_minute);   
+                console.log(qlock.date.getRoundedHours() + ":" + qlock.date.getRoundedMinutes() + "-" + qlock.date.getHours() + ":" + qlock.date.getMinutes());
+                $("#qlock > div > span").removeClass("active");
+                $.each(qlock.words(), function(index, value) {
+                    $("#" + value).addClass("active");
+                });
+                if (1440 == minutes) {
+                    clearInterval(interval);
+                }
+            }, 500);
+            
+        } else {
+            
+            /* Normal code updated every second. */
+            var interval = setInterval(function() {
+                var now   = new Date();
+                var qlock = new Qlock(now);
+
+                $.each(qlock.words(), function(index, value) {
+                    $("#" + value).addClass("active");
+                });
+
+            }, 1000);         
+        }
+
+    });
+  
+    
+  </script>
+</body>
+</html>
